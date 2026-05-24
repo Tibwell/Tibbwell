@@ -1,0 +1,104 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-white text-gray-800 font-sans;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-wellness-green text-white px-6 py-3 rounded-lg font-semibold
+           hover:bg-wellness-dark transition-all duration-200
+           focus:outline-none focus:ring-2 focus:ring-wellness-green focus:ring-offset-2
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply bg-white text-wellness-green border-2 border-wellness-green px-6 py-3 rounded-lg font-semibold
+           hover:bg-wellness-light transition-all duration-200
+           focus:outline-none focus:ring-2 focus:ring-wellness-green focus:ring-offset-2;
+  }
+
+  .section-heading {
+    @apply text-3xl md:text-4xl font-bold text-wellness-dark mb-4;
+  }
+
+  .section-subheading {
+    @apply text-lg text-gray-600 max-w-2xl mx-auto;
+  }
+
+  .card {
+    @apply bg-white rounded-2xl shadow-md p-6 hover:shadow-lg transition-shadow duration-300;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #95d5b2;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2d6a4f;
+}
+
+/* Radio button custom styles */
+.quiz-option {
+  @apply w-full text-left p-4 rounded-xl border-2 border-gray-200
+         hover:border-wellness-green hover:bg-wellness-pale
+         transition-all duration-200 cursor-pointer
+         flex items-center gap-3;
+}
+
+.quiz-option.selected {
+  @apply border-wellness-green bg-wellness-light;
+}
+
+/* Progress bar */
+.progress-bar {
+  @apply h-2 bg-gray-200 rounded-full overflow-hidden;
+}
+
+.progress-bar-fill {
+  @apply h-full bg-wellness-green rounded-full transition-all duration-500 ease-out;
+}
+
+/* Accordion styles */
+.accordion-trigger {
+  @apply w-full flex justify-between items-center py-4 px-0
+         text-left font-medium text-gray-800
+         hover:text-wellness-green transition-colors duration-200;
+}
+
+.accordion-content {
+  @apply overflow-hidden transition-all duration-300 ease-in-out;
+}
+
+/* Fade in animation on scroll */
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.animate-on-scroll.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
