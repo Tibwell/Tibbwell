@@ -15,7 +15,7 @@ from api.database import (
 )
 from passlib.context import CryptContext
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto", bcrypt__rounds=12)
 
 # 25 Quiz Questions covering mizaaj (temperament) assessment
 QUIZ_QUESTIONS_DATA = [
@@ -478,7 +478,8 @@ def seed_database():
         print("Creating admin user...")
         admin = AdminUser(
             username="admin",
-            password_hash=pwd_context.hash("admin123")
+            password_hash=pwd_context.hash("admin123"),
+            is_admin=True
         )
         db.add(admin)
         

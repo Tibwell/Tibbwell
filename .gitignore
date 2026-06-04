@@ -6,8 +6,12 @@ venv/
 test_venv/
 *.egg-info/
 .env
+.env.local
+.env.production
 *.db
 .DS_Store
 dist/
 build/
 *.log
+**/.env
+**/.env.*

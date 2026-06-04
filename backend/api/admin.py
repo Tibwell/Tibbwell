@@ -2,26 +2,36 @@
 Admin dashboard endpoints for TibbWell
 Provides statistics and management for administrators
 """
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, HTTPException, status, Depends, Header
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from datetime import datetime, timedelta
-from typing import List, Dict
+from typing import List, Optional
+from jose import JWTError, jwt
 
-from api.database import get_db, User, QuizResult, TemperamentCombination
+from api.database import get_db, User, QuizResult, TemperamentCombination, AdminUser
 
 router = APIRouter()
 
+# JWT settings (same as auth.py - should be in config in production)
+SECRET_KEY = "your-secret-key-here-change-in-production"
+ALGORITHM = "HS256"
+
+# Subscription price in ZAR
+SUBSCRIPTION_PRICE_ZAR = 99
+
+
+# ================ Admin Authentication ================
 
 class AdminStatsResponse(BaseModel):
     total_users: int
     total_premium_subscribers: int
     total_revenue_zAR: int
     quiz_completion_rate: float
-    most_common_temperaments: List[Dict]
-    recent_registrations: List[Dict]
+    most_common_temperaments: List[dict]
+    recent_registrations: List[dict]
     registration_growth_percent: float
 
 
@@ -31,7 +41,62 @@ class TemperamentCount(BaseModel):
     percentage: float
 
 
-@router.get("/stats", response_model=AdminStatsResponse)
+async def get_current_admin_user(
+    authorization: Optional[str] = Header(None),
+    db: Session = Depends(get_db)
+) -> AdminUser:
+    """
+    Dependency to verify admin authentication
+    
+    Extracts and validates the JWT token from Authorization header,
+    then verifies the user exists in the admin_users table.
+    
+    Raises HTTPException 401 if not authenticated
+    Raises HTTPException 403 if not an admin
+    """
+    if not authorization:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated"
+        )
+    
+    # Remove 'Bearer ' prefix if present
+    if authorization.startswith("Bearer "):
+        token = authorization[7:]
+    else:
+        token = authorization
+    
+    try:
+        # Decode the JWT token
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id = int(payload.get("sub"))
+        
+        # Check if user is an admin
+        admin_user = db.query(AdminUser).filter(AdminUser.id == user_id).first()
+        
+        if not admin_user:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Admin access required"
+            )
+        
+        return admin_user
+    
+    except JWTError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired token"
+        )
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid token format"
+        )
+
+
+# ================ Admin Routes ================
+
+@router.get("/stats", response_model=AdminStatsResponse, dependencies=[Depends(get_current_admin_user)])
 async def get_admin_stats(db: Session = Depends(get_db)):
     """
     Get admin dashboard statistics
@@ -127,11 +192,7 @@ async def get_admin_stats(db: Session = Depends(get_db)):
     )
 
 
-# Subscription price in ZAR
-SUBSCRIPTION_PRICE_ZAR = 99
-
-
-@router.get("/users")
+@router.get("/users", dependencies=[Depends(get_current_admin_user)])
 async def get_all_users(
     skip: int = 0,
     limit: int = 100,
@@ -157,7 +218,7 @@ async def get_all_users(
     }
 
 
-@router.get("/users/{user_id}")
+@router.get("/users/{user_id}", dependencies=[Depends(get_current_admin_user)])
 async def get_user_details(
     user_id: int,
     db: Session = Depends(get_db)
@@ -199,7 +260,7 @@ async def get_user_details(
     }
 
 
-@router.get("/quiz-stats")
+@router.get("/quiz-stats", dependencies=[Depends(get_current_admin_user)])
 async def get_quiz_statistics(db: Session = Depends(get_db)):
     """
     Get detailed quiz statistics
@@ -221,7 +282,7 @@ async def get_quiz_statistics(db: Session = Depends(get_db)):
     }
 
 
-@router.put("/users/{user_id}/premium")
+@router.put("/users/{user_id}/premium", dependencies=[Depends(get_current_admin_user)])
 async def update_user_premium_status(
     user_id: int,
     is_premium: bool,

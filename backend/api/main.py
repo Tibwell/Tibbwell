@@ -2,12 +2,14 @@
 TibbWell Backend API
 FastAPI application entry point
 """
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+import httpx
+from datetime import datetime
 
 # Import routers
-from api.auth import router as auth_router
+from api.auth import router as auth_router, pwd_context
 from api.quiz import router as quiz_router
 from api.premium import router as premium_router
 from api.admin import router as admin_router
@@ -67,15 +69,125 @@ async def health_check():
 
 @app.get("/api/health")
 async def api_health_check():
-    """API health check with more detail"""
-    return JSONResponse(
-        status_code=200,
-        content={
-            "status": "healthy",
-            "service": "tibbwell-backend",
-            "version": "1.0.0"
+    """
+    API health check with external service status
+    
+    Reports the health status of:
+    - Local API service
+    - PayFast payment service (if configured)
+    """
+    health_status = {
+        "status": "healthy",
+        "service": "tibbwell-backend",
+        "version": "1.0.0",
+        "timestamp": datetime.now().isoformat(),
+        "external_services": {}
+    }
+    
+    # Check PayFast health
+    try:
+        async with httpx.AsyncClient(timeout=5.0) as client:
+            response = await client.get("https://api.payfast.co.za/health")
+            if response.status_code == 200:
+                health_status["external_services"]["payfast"] = {
+                    "status": "healthy",
+                    "latency_ms": round(response.elapsed.total_seconds() * 1000, 2)
+                }
+            else:
+                health_status["external_services"]["payfast"] = {
+                    "status": "degraded",
+                    "status_code": response.status_code
+                }
+    except httpx.TimeoutException:
+        health_status["external_services"]["payfast"] = {
+            "status": "timeout",
+            "error": "Connection timeout"
         }
+        health_status["status"] = "degraded"
+    except httpx.ConnectError:
+        health_status["external_services"]["payfast"] = {
+            "status": "unavailable",
+            "error": "Connection failed"
+        }
+        health_status["status"] = "degraded"
+    except Exception as e:
+        health_status["external_services"]["payfast"] = {
+            "status": "unknown",
+            "error": str(e)
+        }
+    
+    # Check database connectivity (basic query)
+    try:
+        from api.database import SessionLocal, User
+        db = SessionLocal()
+        db.execute("SELECT 1")
+        db.close()
+        health_status["database"] = {"status": "healthy"}
+    except Exception as e:
+        health_status["database"] = {"status": "error", "error": str(e)}
+        health_status["status"] = "degraded"
+    
+    return JSONResponse(
+        status_code=200 if health_status["status"] == "healthy" else 503,
+        content=health_status
     )
+
+
+# Admin login endpoint (separate from user auth)
+from fastapi import APIRouter
+
+admin_auth_router = APIRouter()
+
+
+@admin_auth_router.post("/api/admin/login")
+async def admin_login(username: str, password: str, db):
+    """
+    Admin login endpoint
+    
+    Authenticates admin users and returns a JWT token.
+    Admins have a separate token from regular users.
+    """
+    from api.database import AdminUser, User
+    from jose import jwt
+    from datetime import timedelta
+    
+    SECRET_KEY = "your-secret-key-here-change-in-production"
+    ALGORITHM = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES = 60  # Admin tokens last 1 hour
+    
+    # Find admin user
+    admin = db.query(AdminUser).filter(AdminUser.username == username).first()
+    
+    if not admin or not pwd_context.verify(password, admin.password_hash):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid admin credentials"
+        )
+    
+    # Create admin token
+    access_token = jwt.encode(
+        {
+            "sub": str(admin.id),
+            "username": admin.username,
+            "type": "admin",
+            "exp": datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        },
+        SECRET_KEY,
+        algorithm=ALGORITHM
+    )
+    
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "expires_in": ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+        "admin": {
+            "id": admin.id,
+            "username": admin.username
+        }
+    }
+
+
+app.include_router(admin_auth_router)
 
 
 if __name__ == "__main__":

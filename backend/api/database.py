@@ -40,11 +40,26 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String(255), unique=True, nullable=False, index=True)
     password_hash = Column(String(255), nullable=False)
-    name = Column(String(255), nullable=False)
+    name = Column(String(100), nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
     is_premium = Column(Boolean, default=False)
     payfast_subscription_id = Column(String(255), nullable=True)
     temperament_combination_id = Column(Integer, ForeignKey("temperament_combinations.id"), nullable=True)
+    
+    # Security fields
+    email_verified = Column(Boolean, default=False)
+    verification_token = Column(String(255), nullable=True)
+    
+    # Login security
+    failed_attempts = Column(Integer, default=0)
+    locked_until = Column(DateTime, nullable=True)
+    
+    # Password reset
+    reset_token = Column(String(255), nullable=True)
+    reset_token_expiry = Column(DateTime, nullable=True)
+    
+    # Refresh token (hashed)
+    refresh_token_hash = Column(String(255), nullable=True)
     
     # Relationships
     quiz_results = relationship("QuizResult", back_populates="user")
@@ -144,6 +159,7 @@ class AdminUser(Base):
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String(100), unique=True, nullable=False)
     password_hash = Column(String(255), nullable=False)
+    is_admin = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
