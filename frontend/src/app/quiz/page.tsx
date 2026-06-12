@@ -262,17 +262,6 @@ const MOCK_QUESTIONS = [
     ],
   },
   {
-    id: 24,
-    question_text: "Your typical pulse is:",
-    category: "physical",
-    options: [
-      { text: "Full and bounding", temperament: "sanguinous", points: 3 },
-      { text: "Quick and strong", temperament: "bilious", points: 3 },
-      { text: "Slow and steady", temperament: "phlegmatic", points: 3 },
-      { text: "Weak and irregular", temperament: "melancholic", points: 3 },
-    ],
-  },
-  {
     id: 25,
     question_text: "What motivates you most in life?",
     category: "mental",

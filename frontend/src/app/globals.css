@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&display=swap');
 
 @layer base {
   html {
@@ -10,30 +11,34 @@
   }
 
   body {
-    @apply bg-white text-gray-800 font-sans;
+    @apply bg-cream text-slate font-sans;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading text-forest;
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply bg-wellness-green text-white px-6 py-3 rounded-lg font-semibold
-           hover:bg-wellness-dark transition-all duration-200
-           focus:outline-none focus:ring-2 focus:ring-wellness-green focus:ring-offset-2
+    @apply bg-terracotta text-white px-6 py-3 rounded-lg font-semibold
+           hover:bg-amber-700 transition-all duration-200
+           focus:outline-none focus:ring-2 focus:ring-terracotta focus:ring-offset-2
            disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   .btn-secondary {
-    @apply bg-white text-wellness-green border-2 border-wellness-green px-6 py-3 rounded-lg font-semibold
-           hover:bg-wellness-light transition-all duration-200
-           focus:outline-none focus:ring-2 focus:ring-wellness-green focus:ring-offset-2;
+    @apply bg-white text-terracotta border-2 border-terracotta px-6 py-3 rounded-lg font-semibold
+           hover:bg-amber-50 transition-all duration-200
+           focus:outline-none focus:ring-2 focus:ring-terracotta focus:ring-offset-2;
   }
 
   .section-heading {
-    @apply text-3xl md:text-4xl font-bold text-wellness-dark mb-4;
+    @apply text-3xl md:text-4xl font-bold text-forest mb-4 font-heading;
   }
 
   .section-subheading {
-    @apply text-lg text-gray-600 max-w-2xl mx-auto;
+    @apply text-lg text-slate/80 max-w-2xl mx-auto;
   }
 
   .card {
@@ -41,57 +46,40 @@
   }
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #f1f1f1; }
+::-webkit-scrollbar-thumb { background: #C48A54; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #2C3E2B; }
 
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #95d5b2;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #2d6a4f;
-}
-
-/* Radio button custom styles */
 .quiz-option {
   @apply w-full text-left p-4 rounded-xl border-2 border-gray-200
-         hover:border-wellness-green hover:bg-wellness-pale
+         hover:border-terracotta hover:bg-amber-50
          transition-all duration-200 cursor-pointer
          flex items-center gap-3;
 }
 
 .quiz-option.selected {
-  @apply border-wellness-green bg-wellness-light;
+  @apply border-terracotta bg-amber-100;
 }
 
-/* Progress bar */
 .progress-bar {
   @apply h-2 bg-gray-200 rounded-full overflow-hidden;
 }
 
 .progress-bar-fill {
-  @apply h-full bg-wellness-green rounded-full transition-all duration-500 ease-out;
+  @apply h-full bg-terracotta rounded-full transition-all duration-500 ease-out;
 }
 
-/* Accordion styles */
 .accordion-trigger {
   @apply w-full flex justify-between items-center py-4 px-0
          text-left font-medium text-gray-800
-         hover:text-wellness-green transition-colors duration-200;
+         hover:text-terracotta transition-colors duration-200;
 }
 
 .accordion-content {
   @apply overflow-hidden transition-all duration-300 ease-in-out;
 }
 
-/* Fade in animation on scroll */
 .animate-on-scroll {
   opacity: 0;
   transform: translateY(20px);

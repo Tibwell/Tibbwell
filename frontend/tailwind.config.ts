@@ -9,18 +9,10 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: {
-          50: "#ecfdf5",
-          100: "#d8f3dc",
-          200: "#a7f3d0",
-          300: "#6ee7b7",
-          400: "#34d399",
-          500: "#2d6a4f",
-          600: "#1b5e3a",
-          700: "#14532d",
-          800: "#0f3d23",
-          900: "#0a2a18",
-        },
+        cream: "#FDFBF7",
+        forest: "#2C3E2B",
+        slate: "#2B2D42",
+        terracotta: "#C48A54",
         wellness: {
           green: "#2d6a4f",
           light: "#d8f3dc",
@@ -31,6 +23,7 @@ const config: Config = {
       },
       fontFamily: {
         sans: ["Inter", "system-ui", "sans-serif"],
+        heading: ["Playfair Display", "Georgia", "serif"],
       },
       animation: {
         "fade-in": "fadeIn 0.6s ease-out forwards",
@@ -38,18 +31,9 @@ const config: Config = {
         "slide-down": "slideDown 0.3s ease-out forwards",
       },
       keyframes: {
-        fadeIn: {
-          "0%": { opacity: "0" },
-          "100%": { opacity: "1" },
-        },
-        slideUp: {
-          "0%": { opacity: "0", transform: "translateY(20px)" },
-          "100%": { opacity: "1", transform: "translateY(0)" },
-        },
-        slideDown: {
-          "0%": { opacity: "0", transform: "translateY(-10px)" },
-          "100%": { opacity: "1", transform: "translateY(0)" },
-        },
+        fadeIn: { "0%": { opacity: "0" }, "100%": { opacity: "1" } },
+        slideUp: { "0%": { opacity: "0", transform: "translateY(20px)" }, "100%": { opacity: "1", transform: "translateY(0)" } },
+        slideDown: { "0%": { opacity: "0", transform: "translateY(-10px)" }, "100%": { opacity: "1", transform: "translateY(0)" } },
       },
     },
   },
