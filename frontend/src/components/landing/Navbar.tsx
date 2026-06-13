@@ -40,6 +40,18 @@ export default function Navbar() {
             >
               FAQ
             </Link>
+            <Link
+              href="/login"
+              className="text-gray-600 hover:text-wellness-green transition-colors"
+            >
+              Login
+            </Link>
+            <Link
+              href="/register"
+              className="text-gray-600 hover:text-wellness-green transition-colors"
+            >
+              Register
+            </Link>
             <Link href="/quiz" className="btn-primary text-sm">
               Take the Free Quiz
             </Link>
@@ -100,6 +112,20 @@ export default function Navbar() {
                 onClick={() => setIsOpen(false)}
               >
                 FAQ
+              </Link>
+              <Link
+                href="/login"
+                className="text-gray-600 hover:text-wellness-green transition-colors py-2"
+                onClick={() => setIsOpen(false)}
+              >
+                Login
+              </Link>
+              <Link
+                href="/register"
+                className="text-gray-600 hover:text-wellness-green transition-colors py-2"
+                onClick={() => setIsOpen(false)}
+              >
+                Register
               </Link>
               <Link
                 href="/quiz"

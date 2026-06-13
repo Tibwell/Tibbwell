@@ -18,17 +18,7 @@ export default function AdminLoginPage() {
     setLoading(true);
 
     try {
-      // Try API first, fall back to mock credentials for dev
-      try {
-        await adminApi.login({ username, password });
-      } catch {
-        // Mock login for development: admin / admin123
-        if (username === "admin" && password === "admin123") {
-          localStorage.setItem("tibbwell_admin_token", "mock-admin-token");
-        } else {
-          throw new Error("Invalid credentials");
-        }
-      }
+      await adminApi.login({ username, password });
       router.push("/admin");
     } catch (err: any) {
       setError(err.message || "Login failed. Please try again.");
@@ -110,11 +100,7 @@ export default function AdminLoginPage() {
               )}
             </button>
           </form>
-
-          <p className="text-xs text-gray-400 text-center mt-6">
-            Default credentials: admin / admin123
-          </p>
-        </div>
+          </div>
 
         <div className="text-center mt-6">
           <Link href="/" className="text-sm text-wellness-green hover:text-wellness-dark transition-colors">

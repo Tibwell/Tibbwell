@@ -6,40 +6,6 @@ import Link from "next/link";
 import { adminApi, AdminStats, AdminUser } from "@/lib/api";
 import { MOCK_TEMPERAMENT_COMBINATIONS } from "@/lib/dashboard";
 
-// ─── Mock data for development ────────────────────────────
-const MOCK_STATS: AdminStats = {
-  total_users: 1247,
-  active_subscribers: 382,
-  monthly_revenue: 37818,
-  quiz_completion_rate: 68.5,
-  most_common_temperament: "Sanguinous-Phlegmatic",
-  temperament_distribution: {
-    "Sanguinous-Phlegmatic": 182,
-    "Sanguinous-Bilious": 156,
-    "Phlegmatic-Melancholic": 134,
-    "Bilious-Sanguinous": 118,
-    "Melancholic-Sanguinous": 97,
-    "Bilious-Melancholic": 88,
-    "Phlegmatic-Sanguinous": 76,
-    "Melancholic-Bilious": 65,
-    "Phlegmatic-Bilious": 54,
-    "Sanguinous-Melancholic": 48,
-    "Bilious-Phlegmatic": 42,
-    "Melancholic-Phlegmatic": 38,
-  },
-};
-
-const MOCK_USERS: AdminUser[] = [
-  { id: 1, name: "Sarah Johnson", email: "sarah@example.com", created_at: "2026-05-15", is_premium: true, temperament: "Sanguinous-Phlegmatic" },
-  { id: 2, name: "Mike Peters", email: "mike@example.com", created_at: "2026-05-14", is_premium: true, temperament: "Bilious-Sanguinous" },
-  { id: 3, name: "Emma Wilson", email: "emma@example.com", created_at: "2026-05-12", is_premium: false, temperament: "Phlegmatic-Melancholic" },
-  { id: 4, name: "David Lee", email: "david@example.com", created_at: "2026-05-10", is_premium: true, temperament: "Sanguinous-Bilious" },
-  { id: 5, name: "Lisa Chen", email: "lisa@example.com", created_at: "2026-05-08", is_premium: false },
-  { id: 6, name: "James Brown", email: "james@example.com", created_at: "2026-05-07", is_premium: true, temperament: "Melancholic-Sanguinous" },
-  { id: 7, name: "Anna Patel", email: "anna@example.com", created_at: "2026-05-05", is_premium: true, temperament: "Bilious-Melancholic" },
-  { id: 8, name: "Tom Harris", email: "tom@example.com", created_at: "2026-05-03", is_premium: false },
-];
-
 export default function AdminDashboardPage() {
   const router = useRouter();
   const [isAuthed, setIsAuthed] = useState(false);
@@ -48,6 +14,7 @@ export default function AdminDashboardPage() {
   const [activeTab, setActiveTab] = useState<"overview" | "users" | "content">("overview");
   const [selectedCombo, setSelectedCombo] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const token =
@@ -58,13 +25,24 @@ export default function AdminDashboardPage() {
     }
     setIsAuthed(true);
 
-    // Load data
-    const timer = setTimeout(() => {
-      setStats(MOCK_STATS);
-      setUsers(MOCK_USERS);
-      setLoading(false);
-    }, 500);
-    return () => clearTimeout(timer);
+    const loadData = async () => {
+      try {
+        const [statsData, usersData] = await Promise.all([
+          adminApi.getStats(),
+          adminApi.getUsers(),
+        ]);
+        setStats(statsData);
+        setUsers(usersData);
+      } catch (err: any) {
+        setError(err.message || "Failed to load admin data.");
+        setStats(null);
+        setUsers([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
   }, [router]);
 
   const handleLogout = () => {
@@ -79,10 +57,7 @@ export default function AdminDashboardPage() {
         prev.map((u) => (u.id === userId ? { ...u, is_premium: !current } : u))
       );
     } catch {
-      // Toggle locally for mock
-      setUsers((prev) =>
-        prev.map((u) => (u.id === userId ? { ...u, is_premium: !current } : u))
-      );
+      setError("Failed to update premium status.");
     }
   };
 
@@ -100,6 +75,28 @@ export default function AdminDashboardPage() {
   }
 
   const combo = MOCK_TEMPERAMENT_COMBINATIONS[selectedCombo];
+
+  if (error && !stats) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto px-4">
+          <div className="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+          </div>
+          <h2 className="text-xl font-bold text-gray-800 mb-2">Unable to Load Dashboard</h2>
+          <p className="text-gray-500 text-sm mb-6">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="bg-wellness-green text-white px-6 py-3 rounded-xl font-semibold hover:bg-wellness-dark transition-all"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
