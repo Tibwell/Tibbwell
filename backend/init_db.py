@@ -478,7 +478,7 @@ def seed_database():
         print("Creating admin user...")
         admin = AdminUser(
             username="admin",
-            password_hash=pwd_context.hash("admin123"),
+            password_hash=pwd_context.hash("3d5d511bd347b00e97ef851e"),
             is_admin=True
         )
         db.add(admin)
