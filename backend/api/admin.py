@@ -12,6 +12,7 @@ from typing import List, Optional
 from jose import JWTError, jwt
 
 from api.database import get_db, User, QuizResult, TemperamentCombination, AdminUser
+from api.auth import pwd_context
 
 router = APIRouter()
 
@@ -24,6 +25,20 @@ SUBSCRIPTION_PRICE_ZAR = 99
 
 
 # ================ Admin Authentication ================
+
+class AdminLoginRequest(BaseModel):
+    """Admin login request"""
+    username: str = Field(..., min_length=1, max_length=100)
+    password: str = Field(..., min_length=1, max_length=128)
+
+
+class AdminLoginResponse(BaseModel):
+    """Admin login response"""
+    access_token: str
+    token_type: str = "bearer"
+    expires_in: int
+    admin: dict
+
 
 class AdminStatsResponse(BaseModel):
     total_users: int
@@ -95,6 +110,56 @@ async def get_current_admin_user(
 
 
 # ================ Admin Routes ================
+
+@router.post("/login", response_model=AdminLoginResponse)
+async def admin_login(
+    credentials: AdminLoginRequest,
+    db: Session = Depends(get_db)
+):
+    """
+    Admin login endpoint
+    
+    Authenticates admin users and returns a JWT token.
+    Admins have a separate token from regular users.
+    """
+    from jose import jwt
+    from datetime import timedelta
+    
+    ACCESS_TOKEN_EXPIRE_MINUTES = 60  # Admin tokens last 1 hour
+    
+    # Find admin user
+    admin = db.query(AdminUser).filter(
+        AdminUser.username == credentials.username
+    ).first()
+    
+    if not admin or not pwd_context.verify(credentials.password, admin.password_hash):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid admin credentials"
+        )
+    
+    # Create admin token
+    access_token = jwt.encode(
+        {
+            "sub": str(admin.id),
+            "username": admin.username,
+            "type": "admin",
+            "exp": datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        },
+        SECRET_KEY,
+        algorithm=ALGORITHM
+    )
+    
+    return AdminLoginResponse(
+        access_token=access_token,
+        token_type="bearer",
+        expires_in=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+        admin={
+            "id": admin.id,
+            "username": admin.username
+        }
+    )
+
 
 @router.get("/stats", response_model=AdminStatsResponse, dependencies=[Depends(get_current_admin_user)])
 async def get_admin_stats(db: Session = Depends(get_db)):

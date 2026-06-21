@@ -133,63 +133,6 @@ async def api_health_check():
     )
 
 
-# Admin login endpoint (separate from user auth)
-from fastapi import APIRouter
-
-admin_auth_router = APIRouter()
-
-
-@admin_auth_router.post("/api/admin/login")
-async def admin_login(username: str, password: str, db):
-    """
-    Admin login endpoint
-    
-    Authenticates admin users and returns a JWT token.
-    Admins have a separate token from regular users.
-    """
-    from api.database import AdminUser, User
-    from jose import jwt
-    from datetime import timedelta
-    
-    SECRET_KEY = "your-secret-key-here-change-in-production"
-    ALGORITHM = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES = 60  # Admin tokens last 1 hour
-    
-    # Find admin user
-    admin = db.query(AdminUser).filter(AdminUser.username == username).first()
-    
-    if not admin or not pwd_context.verify(password, admin.password_hash):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid admin credentials"
-        )
-    
-    # Create admin token
-    access_token = jwt.encode(
-        {
-            "sub": str(admin.id),
-            "username": admin.username,
-            "type": "admin",
-            "exp": datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-        },
-        SECRET_KEY,
-        algorithm=ALGORITHM
-    )
-    
-    return {
-        "access_token": access_token,
-        "token_type": "bearer",
-        "expires_in": ACCESS_TOKEN_EXPIRE_MINUTES * 60,
-        "admin": {
-            "id": admin.id,
-            "username": admin.username
-        }
-    }
-
-
-app.include_router(admin_auth_router)
-
-
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(

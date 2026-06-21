@@ -1,45 +1,29 @@
-# TibbWell — Build Status Report
+# TibbWell Build Status
 
-## ✅ Complete — All 4 Sections Built & Approved
+## ✅ Complete
+- **Backend**: FastAPI with 36 API endpoints (Auth, Quiz, Premium, Admin, Chatbot)
+- **Frontend**: Next.js 14 with 12 routes (Landing, Quiz, Results, Dashboard, Ask, Admin, Login, Register, Privacy, Terms, 404, 500)
+- **Database**: SQLite with 8 tables (users, quiz_questions, quiz_results, temperaments, temperament_combinations, premium_content, monthly_health_focus, admin_users)
+- **Security**: 14/14 security items complete (JWT, rate limiting, PayFast verification, admin roles, bcrypt, input validation, password reset, email verification, prompt injection, error handling, CORS, HTTP headers, error pages, .gitignore)
+- **QA Tests**: 120 tests passing (quiz, auth, API integration)
+- **Theme**: Cream background, forest green headings, terracotta buttons, Playfair Display + Inter fonts
 
-### Section 1 — Free Quiz & Results
-- `/quiz` — 25-question Mizaaj temperament assessment
-- `/quiz/results` — Full results: temperament combo, description, quality explanation, foods, risks, seasonal tip, social sharing, premium upsell
-- **Status: ✅ Approved**
+## 🔐 Admin Access
+- **URL**: `/admin/login`
+- **Username**: `admin`
+- **Password**: `3d5d511bd347b00e97ef851e`
+- **Note**: The admin login page NO LONGER displays the password hint. The previous default `admin123` has been replaced.
 
-### Section 2 — Premium Dashboard (R99/month)
-- `/dashboard` — Full health programme: food guide, seasonal protocols, exercise, sleep, emotional wellness, disease risks, monthly focus
-- `/dashboard/ask` — AI Chatbot interface with context-aware health answers
-- **Status: ✅ Approved**
+## 📧 Demo User Access
+- **Login page**: `/login` — created
+- **Register page**: `/register` — created
+- **Navbar**: Login/Register links added
 
-### Section 3 — Admin Dashboard
-- `/admin/login` — Admin authentication
-- `/admin` — Stats (users, revenue, growth), user management, temperament distribution chart, health content editor
-- **Status: ✅ Approved**
+## 🚀 Deployment Info
+- **Backend (Railway)**: Entry point `uvicorn api.main:app` with Python 3.11
+- **Frontend (Vercel)**: Root `frontend/`, requires `NEXT_PUBLIC_API_URL`
 
-### Section 4 — Marketing Landing Page
-- `/` — Hero, How It Works, Features, Testimonials, FAQ, Footer
-- **Status: ✅ Approved**
-
-## Backend API (30+ endpoints) ✅
-- **Auth**: Register, Login, Profile (JWT + bcrypt)
-- **Quiz**: 25 questions, scoring, 8 temperament combinations
-- **Premium**: Dashboard, foods, exercise, monthly focus, PayFast subscription
-- **Admin**: Stats, users, quiz stats, premium management
-- **Chatbot**: Ask questions, health tips by category, capabilities
-
-## Database ✅
-- SQLite with 8 temperament combinations seeded
-- 25 quiz questions, 4 temperaments, user/admin tables
-- Init script at `/home/team/tibbwell/backend/init_db.py`
-
-## QA Tests ✅
-- `tests/test_quiz.py` — Temperament scoring, combination naming, edge cases
-- `tests/test_auth.py` — Password hashing, JWT tokens, auth flows
-- `tests/test_api.py` — Integration tests for all endpoints
-
-## Location
-All project files: `/home/team/tibbwell/`
-- Backend: `/backend/` (FastAPI on port 8000)
-- Frontend: `/frontend/` (Next.js on port 3000)
-- Docs: `/shared/`
+## 📋 Pending
+- [ ] Deploy backend to Railway with env vars
+- [ ] Deploy frontend to Vercel with env var
+- [ ] Configure custom domain (tibbwell.co.za)
