@@ -26,3 +26,12 @@ else:
 
 # Session factory
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+
+def get_db():
+    """Get database session - use with FastAPI Depends()"""
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
