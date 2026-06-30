@@ -159,8 +159,8 @@ export const adminApi = {
     password: string;
   }): Promise<{ token: string }> => {
     const response = await api.post("/api/admin/login", data);
-    if (response.data.token) {
-      localStorage.setItem("tibbwell_admin_token", response.data.token);
+    if (response.data.access_token) {
+      localStorage.setItem("tibbwell_token", response.data.access_token);
     }
     return response.data;
   },
