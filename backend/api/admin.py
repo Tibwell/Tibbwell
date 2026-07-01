@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from datetime import datetime, timedelta
-from typing import List, Optional
+from typing import List, Optional, Dict
 from jose import JWTError, jwt
 
 from api.database import get_db, User, QuizResult, TemperamentCombination, AdminUser
@@ -42,10 +42,11 @@ class AdminLoginResponse(BaseModel):
 
 class AdminStatsResponse(BaseModel):
     total_users: int
-    total_premium_subscribers: int
-    total_revenue_zAR: int
+    active_subscribers: int
+    monthly_revenue: int
     quiz_completion_rate: float
-    most_common_temperaments: List[dict]
+    most_common_temperament: str
+    temperament_distribution: Dict[str, int]
     recent_registrations: List[dict]
     registration_growth_percent: float
 
@@ -248,10 +249,11 @@ async def get_admin_stats(db: Session = Depends(get_db)):
     
     return AdminStatsResponse(
         total_users=total_users,
-        total_premium_subscribers=total_premium,
-        total_revenue_zAR=total_revenue_zAR,
+        active_subscribers=total_premium,
+        monthly_revenue=total_revenue_zAR,
         quiz_completion_rate=round(quiz_completion_rate, 1),
-        most_common_temperaments=most_common_temperaments,
+        most_common_temperament=most_common_temperaments[0]["temperament"] if most_common_temperaments else "",
+        temperament_distribution={r["temperament"]: r["count"] for r in most_common_temperaments},
         recent_registrations=recent_registrations,
         registration_growth_percent=round(registration_growth_percent, 1)
     )

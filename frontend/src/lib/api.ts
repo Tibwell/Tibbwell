@@ -200,7 +200,7 @@ export const adminApi = {
   },
 
   logout: () => {
-    localStorage.removeItem("tibbwell_admin_token");
+    localStorage.removeItem("tibbwell_token");
   },
 };
 
@@ -212,9 +212,7 @@ const adminApiInstance = axios.create({
 
 adminApiInstance.interceptors.request.use((config) => {
   if (typeof window !== "undefined") {
-    const token =
-      localStorage.getItem("tibbwell_admin_token") ||
-      localStorage.getItem("tibbwell_token");
+    const token = localStorage.getItem("tibbwell_token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

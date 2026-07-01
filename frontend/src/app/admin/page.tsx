@@ -18,7 +18,7 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     const token =
-      localStorage.getItem("tibbwell_admin_token");
+      localStorage.getItem("tibbwell_token");
     if (!token) {
       router.push("/admin/login");
       return;
