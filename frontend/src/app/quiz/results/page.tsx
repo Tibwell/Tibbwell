@@ -394,6 +394,9 @@ export default function ResultsPage() {
               Get your full personalised plan including monthly food guides,
               exercise protocols, sleep optimisation, and more.
             </p>
+            <p className="text-white/80 mb-2 max-w-lg mx-auto">
+              Your personalised food and exercise protocol, aligned to your Mizaaj, naturally supports healthy weight management without generic dieting.
+            </p>
             <p className="text-wellness-accent font-bold text-xl mb-6">
               R99/month
             </p>
