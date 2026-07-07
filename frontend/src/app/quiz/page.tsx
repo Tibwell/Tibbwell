@@ -638,10 +638,18 @@ function calculateResults(answers: Record<number, string>) {
 
   const dominantName = temperamentNames[dominant];
   const subDominantName = temperamentNames[subDominant];
-  const comboKey = `${dominantName}-${subDominantName}`;
+
+  // Short names match combinationData keys (e.g. "Bilious" not "Bilious (Choleric)")
+  const temperamentKeyNames: Record<string, string> = {
+    sanguinous: "Sanguinous",
+    bilious: "Bilious",
+    phlegmatic: "Phlegmatic",
+    melancholic: "Melancholic",
+  };
+  const comboKey = `${temperamentKeyNames[dominant]}-${temperamentKeyNames[subDominant]}`;
 
   // Fallback if combination not found (reverse order)
-  const reversedComboKey = `${subDominantName}-${dominantName}`;
+  const reversedComboKey = `${temperamentKeyNames[subDominant]}-${temperamentKeyNames[dominant]}`;
   const combo = combinationData[comboKey] || combinationData[reversedComboKey];
 
   const dominantQuality = qualities[dominant];
