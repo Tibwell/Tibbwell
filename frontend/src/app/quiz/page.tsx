@@ -345,8 +345,6 @@ function calculateResults(answers: Record<number, string>) {
         "Skin irritations",
         "High blood pressure (moderate risk)",
       ],
-      seasonal_tip:
-        "In summer, focus on cooling activities and lighter meals. In winter, maintain moderate exercise to keep your warmth balanced.",
     },
     "Sanguinous-Phlegmatic": {
       description:
@@ -371,8 +369,6 @@ function calculateResults(answers: Record<number, string>) {
         "Respiratory congestion",
         "Seasonal allergies",
       ],
-      seasonal_tip:
-        "Spring is your best season for detox and renewal. Incorporate more movement and lighter eating during this time.",
     },
     "Sanguinous-Melancholic": {
       description:
@@ -397,8 +393,6 @@ function calculateResults(answers: Record<number, string>) {
         "Sleep disturbances",
         "Joint discomfort",
       ],
-      seasonal_tip:
-        "Autumn is your season for grounding. Establish consistent routines and prioritise sleep during this time.",
     },
     "Bilious-Sanguinous": {
       description:
@@ -423,8 +417,6 @@ function calculateResults(answers: Record<number, string>) {
         "Stress-related tension",
         "Liver heat symptoms",
       ],
-      seasonal_tip:
-        "Summer requires cooling practices — avoid midday heat, eat lighter meals, and practice calming activities like swimming.",
     },
     "Bilious-Phlegmatic": {
       description:
@@ -449,8 +441,6 @@ function calculateResults(answers: Record<number, string>) {
         "Skin breakouts",
         "Seasonal fatigue",
       ],
-      seasonal_tip:
-        "Transitional seasons (spring and autumn) are key for you. Use these times to reset your routine and diet.",
     },
     "Bilious-Melancholic": {
       description:
@@ -475,8 +465,6 @@ function calculateResults(answers: Record<number, string>) {
         "Sleep problems",
         "Joint stiffness",
       ],
-      seasonal_tip:
-        "Winter is your time to slow down. Prioritise warming foods, adequate rest, and gentle indoor movement.",
     },
     "Phlegmatic-Sanguinous": {
       description:
@@ -501,8 +489,6 @@ function calculateResults(answers: Record<number, string>) {
         "Lethargy",
         "Respiratory congestion",
       ],
-      seasonal_tip:
-        "Spring can bring congestion — incorporate light detox practices, dry brushing, and more movement into your routine.",
     },
     "Phlegmatic-Bilious": {
       description:
@@ -527,8 +513,6 @@ function calculateResults(answers: Record<number, string>) {
         "Mood swings",
         "Skin congestion",
       ],
-      seasonal_tip:
-        "Summer is your best season. Use the natural warmth to stay active and maintain a lighter diet.",
     },
     "Phlegmatic-Melancholic": {
       description:
@@ -553,8 +537,6 @@ function calculateResults(answers: Record<number, string>) {
         "Slow circulation",
         "Weight gain",
       ],
-      seasonal_tip:
-        "Late autumn and winter require extra self-care. Prioritise warm meals, social connection, and gentle daily movement.",
     },
     "Melancholic-Sanguinous": {
       description:
@@ -579,8 +561,6 @@ function calculateResults(answers: Record<number, string>) {
         "Sleep disruption",
         "Dry skin conditions",
       ],
-      seasonal_tip:
-        "Spring brings renewal — use this time to establish new healthy routines and spend time in nature.",
     },
     "Melancholic-Bilious": {
       description:
@@ -605,8 +585,6 @@ function calculateResults(answers: Record<number, string>) {
         "Sleep issues",
         "Headaches",
       ],
-      seasonal_tip:
-        "Autumn is your power season. Use the cooling energy to focus on projects while maintaining grounding practices.",
     },
     "Melancholic-Phlegmatic": {
       description:
@@ -631,8 +609,6 @@ function calculateResults(answers: Record<number, string>) {
         "Seasonal mood changes",
         "Circulation issues",
       ],
-      seasonal_tip:
-        "Spring is your time for gentle renewal. Start with small daily habits — a short walk, fresh foods, and social connection.",
     },
   };
 
@@ -664,7 +640,7 @@ function calculateResults(answers: Record<number, string>) {
     foods_to_eat: combo?.foods_to_eat || [],
     foods_to_avoid: combo?.foods_to_avoid || [],
     disease_risks: combo?.disease_risks || [],
-    seasonal_tip: combo?.seasonal_tip || "Listen to your body and adjust your lifestyle with the seasons.",
+    seasonal_tip: "Listen to your body and adjust your lifestyle with the seasons.",
   };
 }
 

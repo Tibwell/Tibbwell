@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import api from "@/lib/api";
 
 interface QuizResult {
   dominant_temperament: string;
@@ -21,16 +22,45 @@ export default function ResultsPage() {
   const router = useRouter();
   const [result, setResult] = useState<QuizResult | null>(null);
   const [loading, setLoading] = useState(true);
+  const [currentSeason, setCurrentSeason] = useState("");
 
   useEffect(() => {
     const stored = sessionStorage.getItem("tibbwell_results");
-    if (stored) {
-      setResult(JSON.parse(stored));
-      setLoading(false);
-    } else {
-      // No results found — redirect to quiz
+    if (!stored) {
       router.push("/quiz");
+      return;
     }
+
+    const baseResult = JSON.parse(stored);
+    setResult(baseResult);
+    setLoading(false);
+
+    // Determine Southern Hemisphere season from current month
+    // Dec/Jan/Feb = Summer, Mar/Apr/May = Autumn, Jun/Jul/Aug = Winter, Sep/Oct/Nov = Spring
+    const month = new Date().getMonth();
+    const seasonNames = ["Spring", "Summer", "Autumn", "Winter"];
+    let seasonIdx: number;
+    if (month >= 8 && month <= 10) seasonIdx = 0;      // Spring
+    else if (month == 11 || month <= 1) seasonIdx = 1;  // Summer
+    else if (month >= 2 && month <= 4) seasonIdx = 2;   // Autumn
+    else seasonIdx = 3;                                    // Winter (months 5,6,7)
+
+    setCurrentSeason(seasonNames[seasonIdx]);
+
+    // Fetch combination data from backend to get correct seasonal tips
+    // Build combination name by stripping parentheticals (e.g. "Bilious (Choleric)" -> "Bilious")
+    const baseName = baseResult.combination.replace(/\s*\([^)]*\)/g, "").trim();
+    api.get(`/api/quiz/combination/${encodeURIComponent(baseName)}`)
+      .then((res) => {
+        const tips: string[] = res.data.seasonal_tips || [];
+        if (tips.length >= 4 && tips[seasonIdx]) {
+          baseResult.seasonal_tip = tips[seasonIdx];
+          setResult({ ...baseResult });
+        }
+      })
+      .catch(() => {
+        // Fallback: keep default seasonal_tip from sessionStorage
+      })
   }, [router]);
 
   const handleShare = (platform: string) => {
@@ -287,7 +317,7 @@ export default function ResultsPage() {
             <div>
               <h2 className="text-xl font-bold">Seasonal Tip</h2>
               <p className="text-white/70 text-sm">
-                Advice for the current season
+                Advice for {currentSeason}
               </p>
             </div>
           </div>
