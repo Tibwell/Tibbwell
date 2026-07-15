@@ -81,7 +81,16 @@ export default function DashboardPage() {
   const [data, setData] = useState<PremiumDashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [hasToken, setHasToken] = useState(false);
-  const [activeSeason, setActiveSeason] = useState("summer");
+  // Determine Southern Hemisphere season from current month
+  // Dec/Jan/Feb = Summer, Mar/Apr/May = Autumn, Jun/Jul/Aug = Winter, Sep/Oct/Nov = Spring
+  const getCurrentSeason = () => {
+    const month = new Date().getMonth();
+    if (month >= 8 && month <= 10) return "spring";
+    if (month >= 2 && month <= 4) return "autumn";
+    if (month >= 5 && month <= 7) return "winter";
+    return "summer"; // months 11, 0, 1
+  };
+  const [activeSeason, setActiveSeason] = useState(getCurrentSeason);
 
   useEffect(() => {
     const token = typeof window !== "undefined" ? localStorage.getItem("tibbwell_token") : null;

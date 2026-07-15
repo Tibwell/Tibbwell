@@ -145,14 +145,18 @@ export const MOCK_DASHBOARD_DATA: PremiumDashboardData = {
     combination: "Sanguinous-Phlegmatic",
     quality: "Hot & Moist",
   },
-  monthly_focus: {
-    month: "June",
-    year: 2026,
+  monthly_focus: (() => {
+    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const now = new Date();
+    return {
+    month: monthNames[now.getMonth()],
+    year: now.getFullYear(),
     title: "Summer Harmony: Cooling & Grounding",
     content:
       "As summer arrives, focus on cooling practices that balance your warm temperament. Incorporate lighter meals, spend time near water, and practice gentle movement in the early morning or evening when temperatures are lower.",
     tip: "Start each morning with a glass of warm water with lemon and a 10-minute mindful breathing session to set a calm tone for the day ahead.",
-  },
+    };
+  })(),
   food_guide: {
     foods_to_eat: [
       {
